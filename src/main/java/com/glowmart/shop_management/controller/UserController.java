@@ -1,7 +1,7 @@
 package com.glowmart.shop_management.controller;
 
 import com.glowmart.shop_management.dto.UserDto;
-import com.glowmart.shop_management.entity.service.UserService;
+import com.glowmart.shop_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,6 @@
-package com.glowmart.shop_management.entity.service;
+package com.glowmart.shop_management.service;
 
 import com.glowmart.shop_management.dto.UserDto;
-
-import java.util.Optional;
 
 public interface UserService {
 

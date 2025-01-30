@@ -1,4 +1,4 @@
-package com.glowmart.shop_management.entity.service;
+package com.glowmart.shop_management.service;
 
 import com.glowmart.shop_management.dto.RoleDto;
 

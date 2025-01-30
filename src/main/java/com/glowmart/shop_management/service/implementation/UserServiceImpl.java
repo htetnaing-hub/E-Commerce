@@ -1,10 +1,10 @@
-package com.glowmart.shop_management.entity.service.implementation;
+package com.glowmart.shop_management.service.implementation;
 
 import com.glowmart.shop_management.converter.UserConverter;
 import com.glowmart.shop_management.dto.UserDto;
 import com.glowmart.shop_management.entity.Role;
 import com.glowmart.shop_management.entity.User;
-import com.glowmart.shop_management.entity.service.UserService;
+import com.glowmart.shop_management.service.UserService;
 import com.glowmart.shop_management.exception.DuplicateEmailException;
 import com.glowmart.shop_management.exception.NotFoundRoleException;
 import com.glowmart.shop_management.repository.RoleRepository;

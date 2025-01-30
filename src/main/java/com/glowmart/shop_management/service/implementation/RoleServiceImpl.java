@@ -1,9 +1,9 @@
-package com.glowmart.shop_management.entity.service.implementation;
+package com.glowmart.shop_management.service.implementation;
 
 import com.glowmart.shop_management.converter.RoleConverter;
 import com.glowmart.shop_management.dto.RoleDto;
 import com.glowmart.shop_management.repository.RoleRepository;
-import com.glowmart.shop_management.entity.service.RoleService;
+import com.glowmart.shop_management.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
