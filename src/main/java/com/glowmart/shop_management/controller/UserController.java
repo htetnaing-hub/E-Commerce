@@ -1,5 +1,6 @@
 package com.glowmart.shop_management.controller;
 
+import com.glowmart.shop_management.api.UserAPI;
 import com.glowmart.shop_management.dto.UserDto;
 import com.glowmart.shop_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/user")
+@RequestMapping(UserAPI.BASE_PATH)
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping(path = "/{role}/sign-up")
+    @PostMapping(UserAPI.USER_SIGN_UP)
     public ResponseEntity<?> createUser(@PathVariable("role") String role, @RequestBody UserDto userDto){
         try {
             UserDto createdUserDto = userService.createUser(role, userDto);
