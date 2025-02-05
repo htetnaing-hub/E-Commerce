@@ -10,6 +10,7 @@ import com.glowmart.shop_management.exception.NotFoundRoleException;
 import com.glowmart.shop_management.repository.RoleRepository;
 import com.glowmart.shop_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserDto createUser(String role, UserDto userDto) {
@@ -36,6 +40,7 @@ public class UserServiceImpl implements UserService {
         Role resultRole = roleRepository.findRoleByInputRole(role);
         User user = UserConverter.convertToUser(userDto);
         user.setRole(resultRole);
+        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
         return UserConverter.convertToUserDto(userRepository.save(user));
     }
 

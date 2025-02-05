@@ -36,9 +36,6 @@ public class User {
     @Column(nullable = false)
     private String userPassword;
 
-    /*@Column(nullable = false)
-    private UserAddress address;*/
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
