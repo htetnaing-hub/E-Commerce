@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Represents a user entity in the system.
@@ -44,6 +45,17 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     @JsonIgnore
     private Role role;
+
+    /**
+     * The list of carts associated with this user.
+     * <p>
+     * This represents a one-to-many relationship where a user can have multiple carts.
+     * When a user is deleted, all associated carts are also removed due to
+     * {@code CascadeType.ALL} and {@code orphanRemoval = true}.
+     * </p>
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Cart> cartList;
 
     /**
      * The username chosen by the user.

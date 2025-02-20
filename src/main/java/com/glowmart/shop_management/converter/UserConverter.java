@@ -29,6 +29,7 @@ public class UserConverter {
         User user = new User();
         user.setUserId(userDto.getUserId());
         user.setRole(userDto.getRole());
+        user.setCartList(userDto.getCartList());
         user.setUserName(userDto.getUserName());
         user.setUserEmail(userDto.getUserEmail());
         user.setUserPhone(userDto.getUserPhone());
@@ -54,6 +55,7 @@ public class UserConverter {
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
         userDto.setRole(user.getRole());
+        userDto.setCartList(user.getCartList());
         userDto.setUserName(user.getUserName());
         userDto.setUserEmail(user.getUserEmail());
         userDto.setUserPhone(user.getUserPhone());

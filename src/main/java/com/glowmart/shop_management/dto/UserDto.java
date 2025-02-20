@@ -1,5 +1,6 @@
 package com.glowmart.shop_management.dto;
 
+import com.glowmart.shop_management.entity.Cart;
 import com.glowmart.shop_management.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Data transfer object (DTO) for a User.
@@ -39,6 +41,15 @@ public class UserDto {
      * </p>
      */
     private Role role;
+
+    /**
+     * List of carts associated with the user.
+     * <p>
+     * This field contains all carts owned by the user. It represents a one-to-many
+     * relationship where a user can have multiple carts.
+     * </p>
+     */
+    private Set<Cart> cartList;
 
     /**
      * The username chosen by the user.
