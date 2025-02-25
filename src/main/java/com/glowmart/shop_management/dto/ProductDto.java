@@ -2,11 +2,13 @@ package com.glowmart.shop_management.dto;
 
 import com.glowmart.shop_management.entity.Category;
 import com.glowmart.shop_management.entity.User;
+import com.glowmart.shop_management.entity.WishList;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Data Transfer Object (DTO) for the Product entity.
@@ -45,6 +47,15 @@ public class ProductDto {
      * </p>
      */
     private Category category;
+
+    /**
+     * The set of wishlists that include this product.
+     * <p>
+     * This field represents a collection of wishlists where the product has been added by users.
+     * It helps track which users have saved the product for future reference.
+     * </p>
+     */
+    private Set<WishList> wishLists;
 
     /**
      * The name of the product.

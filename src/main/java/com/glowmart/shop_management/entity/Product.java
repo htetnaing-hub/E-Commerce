@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Represents a product in the shopping system.
@@ -53,6 +54,16 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     @JsonIgnore
     private Category category;
+
+    /**
+     * The set of wishlists that contain this product.
+     * <p>
+     * This field represents a many-to-many relationship between products and wishlists.
+     * A product can be added to multiple wishlists, and each wishlist can contain multiple products.
+     * </p>
+     */
+    @ManyToMany(mappedBy = "products")
+    private Set<WishList> wishLists;
 
     /**
      * The name of the product.
