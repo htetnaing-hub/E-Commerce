@@ -2,6 +2,7 @@ package com.glowmart.shop_management.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,7 +29,9 @@ public class SecurityConfig {
         http
                 .csrf().disable() // Disable CSRF for simplicity (Enable it in production)
                 .authorizeHttpRequests()
-                .requestMatchers("/api/user/{role}/sign-up", "/api/user/login").permitAll() // Allow sign-up and login
+                .requestMatchers("/api/user/{role}/sign-up",
+                        "/api/user/login").permitAll() // Allow sign-up and login
+                .requestMatchers(HttpMethod.POST, "/api/category/create").hasRole("ADMIN")
                 .anyRequest().authenticated() // Protect all other endpoints
                 .and()
                 .httpBasic();
