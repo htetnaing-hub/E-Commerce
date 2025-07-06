@@ -67,6 +67,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
-        return jwtUtil.generateToken(userDetails.getUsername());
+        return jwtUtil.generateToken(userDetails);
     }
 }

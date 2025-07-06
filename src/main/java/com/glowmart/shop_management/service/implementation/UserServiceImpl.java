@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         }
         int countByInputRole = roleRepository.countByInputRole(role);
         if (countByInputRole == 0) {
-            throw new NotFoundRoleException("There is no role for '" + role.toUpperCase() + "'. Role must be 'USER' or 'ADMIN'.");
+            throw new NotFoundRoleException("There is no role for '" + role.toUpperCase() + "'. Role must be 'ROLE_USER' or 'ROLE_ADMIN'.");
         }
         if (userRepository.userExistsByEmail(userDto.getUserEmail())) {
             throw new DuplicateEmailException(userDto.getUserEmail() + " is already exists!");
