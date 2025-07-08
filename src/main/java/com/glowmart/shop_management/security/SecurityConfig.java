@@ -43,7 +43,9 @@ public class SecurityConfig {
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST).permitAll()
                         .requestMatchers(CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_CREATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_UPDATE,
-                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_DELETE).hasRole("ADMIN")
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_DELETE,
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_BY_ID,
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_BY_NAME).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

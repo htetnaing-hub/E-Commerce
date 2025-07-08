@@ -35,11 +35,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto updateCategoryById(Long id, CategoryDto categoryDto) {
-        Optional<Category> findCategoryById = categoryRepository.findById(id);
-        if(findCategoryById.isEmpty()){
+        Optional<Category> categoryById = categoryRepository.findById(id);
+        if(categoryById.isEmpty()){
             throw new NotFoundException("There is no category by id:" + id + "!");
         }
-        Category updateCategoryById = findCategoryById.get();
+        Category updateCategoryById = categoryById.get();
         updateCategoryById.setCategoryName(categoryDto.getCategoryName());
         updateCategoryById.setUpdatedAt(LocalDateTime.now());
         return CategoryConverter.convertToCategoryDto(categoryRepository.save(updateCategoryById));
@@ -47,8 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto deleteCategoryById(Long id) {
-        Optional<Category> findCategoryById = categoryRepository.findById(id);
-        if(findCategoryById.isEmpty()){
+        Optional<Category> categoryById = categoryRepository.findById(id);
+        if(categoryById.isEmpty()){
             throw new NotFoundException("There is no category by id:" + id + "!");
         }
         try {
@@ -57,13 +57,27 @@ public class CategoryServiceImpl implements CategoryService {
             //return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             System.out.println(exception.getMessage() + "==>" + HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return CategoryConverter.convertToCategoryDto(findCategoryById.get());
+        return CategoryConverter.convertToCategoryDto(categoryById.get());
     }
 
     @Override
     public List<CategoryDto> getAllCategory() {
         List<Category> allCategory = categoryRepository.findAll();
         return allCategory.stream().map(CategoryConverter::convertToCategoryDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryDto getCategoryById(Long id) {
+        return categoryRepository.findById(id)
+                .map(CategoryConverter::convertToCategoryDto)
+                .orElseThrow(() -> new NotFoundException("There is no category by id:" + id + "!"));
+    }
+
+    @Override
+    public CategoryDto getCategoryByName(String name) {
+        return categoryRepository.getCategoryByName(name)
+                .map(CategoryConverter::convertToCategoryDto)
+                .orElseThrow(() -> new NotFoundException("There is no category by name:" + name + "!"));
     }
 
 }
