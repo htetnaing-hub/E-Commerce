@@ -2,6 +2,7 @@ package com.glowmart.shop_management.controller;
 
 import com.glowmart.shop_management.api.CategoryAPI;
 import com.glowmart.shop_management.dto.CategoryDto;
+import com.glowmart.shop_management.exception.NotFoundException;
 import com.glowmart.shop_management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,28 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getAllCategory(){
         List<CategoryDto> allCategory = categoryService.getAllCategory();
         return ResponseEntity.ok(allCategory);
+    }
+
+    @GetMapping(CategoryAPI.CATEGORY_BY_ID)
+    public ResponseEntity<?> getCategoryById(@RequestParam("id") Long id){
+        try {
+            CategoryDto categoryById =categoryService.getCategoryById(id);
+            return ResponseEntity.ok(categoryById);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(CategoryAPI.CATEGORY_BY_NAME)
+    public ResponseEntity<?> getCategoryByName(@RequestParam("name") String name){
+        try {
+            CategoryDto categoryByName = categoryService.getCategoryByName(name);
+            return ResponseEntity.ok(categoryByName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }
