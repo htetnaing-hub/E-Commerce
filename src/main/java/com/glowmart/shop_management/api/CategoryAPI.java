@@ -12,6 +12,8 @@ public final class CategoryAPI {
 
     public static final String CATEGORY_BY_CREATED_AT = "/get-by-created-at";
 
+    public static final String CATEGORY_BY_UPDATED_AT = "/get-by-updated-at";
+
     public static final String CATEGORY_CREATE = "/create";
 
     public static final String CATEGORY_UPDATE = "/update/{id}";

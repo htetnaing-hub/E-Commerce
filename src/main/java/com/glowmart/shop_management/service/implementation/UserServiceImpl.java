@@ -4,9 +4,9 @@ import com.glowmart.shop_management.converter.UserConverter;
 import com.glowmart.shop_management.dto.UserDto;
 import com.glowmart.shop_management.entity.Role;
 import com.glowmart.shop_management.entity.User;
+import com.glowmart.shop_management.exception.NotFoundException;
 import com.glowmart.shop_management.service.UserService;
 import com.glowmart.shop_management.exception.DuplicateEmailException;
-import com.glowmart.shop_management.exception.NotFoundRoleException;
 import com.glowmart.shop_management.repository.RoleRepository;
 import com.glowmart.shop_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         }
         int countByInputRole = roleRepository.countByInputRole(role);
         if (countByInputRole == 0) {
-            throw new NotFoundRoleException("There is no role for '" + role.toUpperCase() + "'. Role must be 'ROLE_USER' or 'ROLE_ADMIN'.");
+            throw new NotFoundException("There is no role for '" + role.toUpperCase() + "'. Role must be 'ROLE_USER' or 'ROLE_ADMIN'.");
         }
         if (userRepository.userExistsByEmail(userDto.getUserEmail())) {
             throw new DuplicateEmailException(userDto.getUserEmail() + " is already exists!");

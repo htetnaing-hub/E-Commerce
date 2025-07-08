@@ -21,12 +21,12 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles {@link NotFoundRoleException} and returns a response with a 404 Not Found status.
+     * Handles {@link NotFoundException} and returns a response with a 404 Not Found status.
      *
      * @param exception the exception thrown when a requested role is not found
      * @return a {@link ResponseEntity} containing the exception message and HTTP status
      */
-    public ResponseEntity<String> handleNotFoundRoleException(NotFoundRoleException exception){
+    public ResponseEntity<String> handleNotFoundRoleException(NotFoundException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

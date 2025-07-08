@@ -1,5 +1,7 @@
 package com.glowmart.shop_management.security;
 
+import com.glowmart.shop_management.api.CategoryAPI;
+import com.glowmart.shop_management.api.UserAPI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -36,8 +38,12 @@ public class SecurityConfig {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/{role}/sign-up", "/api/user/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/category/create").hasRole("ADMIN")
+                        .requestMatchers(UserAPI.BASE_PATH + UserAPI.USER_SIGN_UP,
+                                UserAPI.BASE_PATH + UserAPI.USER_LOGIN,
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST).permitAll()
+                        .requestMatchers(CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_CREATE,
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_UPDATE,
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_DELETE).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
