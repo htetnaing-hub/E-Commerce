@@ -25,6 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
+        categoryDto.setCategoryName(categoryDto.getCategoryName().toLowerCase());
         if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName())){
             throw new DuplicateCategoryException(categoryDto.getCategoryName() + " is already exists!");
         }
@@ -75,9 +76,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryByName(String name) {
-        return categoryRepository.getCategoryByName(name)
+        String categoryName = name.toLowerCase();
+        return categoryRepository.getCategoryByName(categoryName)
                 .map(CategoryConverter::convertToCategoryDto)
-                .orElseThrow(() -> new NotFoundException("There is no category by name:" + name + "!"));
+                .orElseThrow(() -> new NotFoundException("There is no category by name:" + categoryName + "!"));
     }
 
 }
