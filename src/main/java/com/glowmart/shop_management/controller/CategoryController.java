@@ -22,20 +22,20 @@ public class CategoryController {
     public ResponseEntity<?> createCategory(@RequestBody CategoryDto categoryDto){
         try{
             CategoryDto createdCategoryDto = categoryService.createCategory(categoryDto);
-        } catch (Exception exception){
-            return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Category is successfully created.", HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Category is successfully created.", HttpStatus.CREATED);
     }
 
     @PutMapping(CategoryAPI.CATEGORY_UPDATE)
     public ResponseEntity<?> updateCategoryById(@PathVariable("id") Long id, @RequestBody CategoryDto categoryDto){
         try{
             CategoryDto updateCategoryById = categoryService.updateCategoryById(id, categoryDto);
+            return new ResponseEntity<>("Category is successfully updated.", HttpStatus.OK);
         } catch(Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("Category is successfully updated.", HttpStatus.OK);
     }
 
     @DeleteMapping(CategoryAPI.CATEGORY_DELETE)
