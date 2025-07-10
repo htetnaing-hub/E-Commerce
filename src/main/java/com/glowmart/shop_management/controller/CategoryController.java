@@ -2,6 +2,7 @@ package com.glowmart.shop_management.controller;
 
 import com.glowmart.shop_management.api.CategoryAPI;
 import com.glowmart.shop_management.dto.CategoryDto;
+import com.glowmart.shop_management.exception.DuplicateCategoryException;
 import com.glowmart.shop_management.exception.NotFoundException;
 import com.glowmart.shop_management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,12 @@ public class CategoryController {
         try{
             CategoryDto updateCategoryById = categoryService.updateCategoryById(id, categoryDto);
             return new ResponseEntity<>("Category is successfully updated.", HttpStatus.OK);
-        } catch(Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (DuplicateCategoryException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch(Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
