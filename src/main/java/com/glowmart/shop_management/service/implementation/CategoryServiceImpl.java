@@ -62,12 +62,12 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> categoryById = categoryRepository.findById(id);
         if(categoryById.isEmpty()){
             throw new NotFoundException("There is no category by id:" + id + "!");
-        }
-        try {
-            categoryRepository.deleteById(id);
-        } catch(Exception exception) {
-            //return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            System.out.println(exception.getMessage() + "==>" + HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            try {
+                categoryRepository.deleteById(id);
+            } catch(Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
         return CategoryConverter.convertToCategoryDto(categoryById.get());
     }

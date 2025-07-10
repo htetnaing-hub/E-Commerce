@@ -40,9 +40,15 @@ public class CategoryController {
 
     @DeleteMapping(CategoryAPI.CATEGORY_DELETE)
     public ResponseEntity<?> deleteCategoryById(@PathVariable("id") Long id){
-        CategoryDto deleteCategoryById = categoryService.deleteCategoryById(id);
-        return new ResponseEntity<>(deleteCategoryById.getCategoryName() + " is successfully deleted from Category.",
-                HttpStatus.OK);
+        try {
+            CategoryDto deleteCategoryById = categoryService.deleteCategoryById(id);
+            return new ResponseEntity<>(deleteCategoryById.getCategoryName() + " is successfully deleted from Category.",
+                    HttpStatus.OK);
+        } catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping(CategoryAPI.CATEGORY_LIST)
