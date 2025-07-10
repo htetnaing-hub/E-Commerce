@@ -37,11 +37,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto updateCategoryById(Long id, CategoryDto categoryDto) {
         Optional<Category> categoryById = categoryRepository.findById(id);
+
         if(categoryById.isEmpty()){
             throw new NotFoundException("There is no category by id:" + id + "!");
         }
+
         Category updateCategoryById = categoryById.get();
-        updateCategoryById.setCategoryName(categoryDto.getCategoryName());
+
+        if (categoryDto.getCategoryName().equalsIgnoreCase(updateCategoryById.getCategoryName())){
+            throw new DuplicateCategoryException(categoryDto.getCategoryName().toLowerCase() + " is same with the old category name!");
+        }
+
+        if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName().toLowerCase())){
+            throw new DuplicateCategoryException(categoryDto.getCategoryName().toLowerCase() + " is already exists!");
+        }
+
+        updateCategoryById.setCategoryName(categoryDto.getCategoryName().toLowerCase());
         updateCategoryById.setUpdatedAt(LocalDateTime.now());
         return CategoryConverter.convertToCategoryDto(categoryRepository.save(updateCategoryById));
     }

@@ -34,7 +34,7 @@ public class CategoryController {
             CategoryDto updateCategoryById = categoryService.updateCategoryById(id, categoryDto);
             return new ResponseEntity<>("Category is successfully updated.", HttpStatus.OK);
         } catch(Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
