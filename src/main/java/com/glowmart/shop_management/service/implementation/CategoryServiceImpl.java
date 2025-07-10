@@ -78,8 +78,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAllCategory() {
-        List<Category> allCategory = categoryRepository.findAll();
-        return allCategory.stream().map(CategoryConverter::convertToCategoryDto).collect(Collectors.toList());
+        try {
+            List<Category> allCategory = categoryRepository.findAll();
+            return allCategory.stream().map(CategoryConverter::convertToCategoryDto).collect(Collectors.toList());
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
