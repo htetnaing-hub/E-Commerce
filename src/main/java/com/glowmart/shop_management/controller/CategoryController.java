@@ -57,9 +57,13 @@ public class CategoryController {
     }
 
     @GetMapping(CategoryAPI.CATEGORY_LIST)
-    public ResponseEntity<List<CategoryDto>> getAllCategory(){
-        List<CategoryDto> allCategory = categoryService.getAllCategory();
-        return ResponseEntity.ok(allCategory);
+    public ResponseEntity<?> getAllCategory(){
+        try {
+            List<CategoryDto> allCategory = categoryService.getAllCategory();
+            return ResponseEntity.ok(allCategory);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+        }
     }
 
     @GetMapping(CategoryAPI.CATEGORY_BY_ID)
@@ -67,9 +71,10 @@ public class CategoryController {
         try {
             CategoryDto categoryById =categoryService.getCategoryById(id);
             return ResponseEntity.ok(categoryById);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -78,9 +83,10 @@ public class CategoryController {
         try {
             CategoryDto categoryByName = categoryService.getCategoryByName(name);
             return ResponseEntity.ok(categoryByName);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
