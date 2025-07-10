@@ -54,7 +54,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         updateCategoryById.setCategoryName(categoryDto.getCategoryName().toLowerCase());
         updateCategoryById.setUpdatedAt(LocalDateTime.now());
-        return CategoryConverter.convertToCategoryDto(categoryRepository.save(updateCategoryById));
+        try {
+            return CategoryConverter.convertToCategoryDto(categoryRepository.save(updateCategoryById));
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
