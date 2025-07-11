@@ -29,4 +29,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFoundRoleException(NotFoundException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    public ResponseEntity<String> handleNotValidNameException(NotValidNameException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

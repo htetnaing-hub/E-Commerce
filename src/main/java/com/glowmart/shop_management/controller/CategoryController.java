@@ -4,6 +4,7 @@ import com.glowmart.shop_management.api.CategoryAPI;
 import com.glowmart.shop_management.dto.CategoryDto;
 import com.glowmart.shop_management.exception.DuplicateCategoryException;
 import com.glowmart.shop_management.exception.NotFoundException;
+import com.glowmart.shop_management.exception.NotValidNameException;
 import com.glowmart.shop_management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,12 @@ public class CategoryController {
         try{
             CategoryDto createdCategoryDto = categoryService.createCategory(categoryDto);
             return new ResponseEntity<>("Category is successfully created.", HttpStatus.CREATED);
-        } catch (Exception e){
+        } catch (NotValidNameException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (DuplicateCategoryException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
