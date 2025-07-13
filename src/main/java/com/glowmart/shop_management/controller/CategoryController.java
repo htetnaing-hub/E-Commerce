@@ -76,10 +76,12 @@ public class CategoryController {
     }
 
     @GetMapping(CategoryAPI.CATEGORY_BY_ID)
-    public ResponseEntity<?> getCategoryById(@RequestParam("id") Long id){
+    public ResponseEntity<?> getCategoryById(@RequestParam("id") String id){
         try {
             CategoryDto categoryById =categoryService.getCategoryById(id);
             return ResponseEntity.ok(categoryById);
+        } catch (NotValidException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e){
@@ -92,6 +94,8 @@ public class CategoryController {
         try {
             CategoryDto categoryByName = categoryService.getCategoryByName(name);
             return ResponseEntity.ok(categoryByName);
+        } catch (NotValidException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e){
