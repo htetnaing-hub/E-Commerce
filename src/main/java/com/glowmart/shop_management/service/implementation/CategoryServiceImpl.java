@@ -103,14 +103,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategoryById(Long id) {
-        return categoryRepository.findById(id)
+    public CategoryDto getCategoryById(String id) {
+        if (CommonFunction.isValidId(id) == false){
+            throw new NotValidException("Category id is not valid! Id must be only number, not null and greater than 0.");
+        }
+        Long categoryId = Long.parseLong(id);
+        return categoryRepository.findById(categoryId)
                 .map(CategoryConverter::convertToCategoryDto)
                 .orElseThrow(() -> new NotFoundException("There is no category by id:" + id + "!"));
     }
 
     @Override
     public CategoryDto getCategoryByName(String name) {
+        if (CommonFunction.isValidName(name) == false){
+            throw new NotValidException("Category name is not valid! Please enter letters and spaces.");
+        }
         String categoryName = name.toLowerCase();
         return categoryRepository.getCategoryByName(categoryName)
                 .map(CategoryConverter::convertToCategoryDto)
