@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    public ResponseEntity<String> handleNotValidNameException(NotValidNameException exception){
+    public ResponseEntity<String> handleNotValidNameException(NotValidException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

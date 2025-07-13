@@ -17,4 +17,20 @@ public class CommonFunction {
         return true;
     }
 
+    public static boolean isValidId(String input){
+        if (input == null || input.trim().isEmpty()){
+            return false;
+        }
+        // Check if input contains only digits
+        if (!input.matches("\\d+")) {
+            return false;
+        }
+        try {
+            Long id = Long.parseLong(input);
+            return id > 0;
+        } catch (NumberFormatException e){
+            return false;
+        }
+    }
+
 }

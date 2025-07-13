@@ -6,12 +6,10 @@ import com.glowmart.shop_management.dto.CategoryDto;
 import com.glowmart.shop_management.entity.Category;
 import com.glowmart.shop_management.exception.DuplicateCategoryException;
 import com.glowmart.shop_management.exception.NotFoundException;
-import com.glowmart.shop_management.exception.NotValidNameException;
+import com.glowmart.shop_management.exception.NotValidException;
 import com.glowmart.shop_management.repository.CategoryRepository;
 import com.glowmart.shop_management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
         if (CommonFunction.isValidName(categoryDto.getCategoryName()) == false){
-            throw new NotValidNameException("Category name is not valid! Please enter letters and spaces.");
+            throw new NotValidException("Category name is not valid! Please enter letters and spaces.");
         }
         categoryDto.setCategoryName(categoryDto.getCategoryName().toLowerCase());
         if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName())){
@@ -40,8 +38,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto updateCategoryById(Long id, CategoryDto categoryDto) {
-        Optional<Category> categoryById = categoryRepository.findById(id);
+    public CategoryDto updateCategoryById(String id, CategoryDto categoryDto) {
+        if(CommonFunction.isValidId(id) == false){
+            throw new NotValidException("Category id is not valid! Id must be only number, not null and greater than 0.");
+        }
+
+        if (CommonFunction.isValidName(categoryDto.getCategoryName()) == false){
+            throw new NotValidException("Category name is not valid! Please enter letters and spaces.");
+        }
+
+        Long categoryId = Long.parseLong(id);
+        Optional<Category> categoryById = categoryRepository.findById(categoryId);
 
         if(categoryById.isEmpty()){
             throw new NotFoundException("There is no category by id:" + id + "!");
