@@ -74,13 +74,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto deleteCategoryById(Long id) {
-        Optional<Category> categoryById = categoryRepository.findById(id);
+    public CategoryDto deleteCategoryById(String id) {
+        if(CommonFunction.isValidId(id) == false){
+            throw new NotValidException("Category id is not valid! Id must be only number, not null and greater than 0.");
+        }
+        Long categoryId = Long.parseLong(id);
+        Optional<Category> categoryById = categoryRepository.findById(categoryId);
         if(categoryById.isEmpty()){
             throw new NotFoundException("There is no category by id:" + id + "!");
         } else {
             try {
-                categoryRepository.deleteById(id);
+                categoryRepository.deleteById(categoryId);
             } catch(Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
