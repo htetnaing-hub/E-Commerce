@@ -62,8 +62,8 @@ public class Product {
      * A product can be added to multiple wishlists, and each wishlist can contain multiple products.
      * </p>
      */
-    @ManyToMany(mappedBy = "products")
-    private Set<WishList> wishLists;
+//    @ManyToMany(mappedBy = "products")
+//    private Set<WishList> wishLists;
 
     /**
      * The name of the product.
@@ -80,8 +80,8 @@ public class Product {
      * This value is required and defaults to 0 if not specified.
      * </p>
      */
-    @Column(nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
-    private double productRealPrice;
+    @Column(nullable = false, columnDefinition = "Double PRECISION DEFAULT 0")
+    private Double productOriginalPrice;
 
     /**
      * A detailed description of the product.
@@ -93,22 +93,13 @@ public class Product {
     private String productDescription;
 
     /**
-     * The type of discount applied to the product.
-     * <p>
-     * This field defines whether the discount is a percentage or a fixed amount.
-     * </p>
-     */
-    @Column(nullable = false)
-    private String productDiscountType;
-
-    /**
      * The discount amount applied to the product.
      * <p>
      * If no discount is provided, this value defaults to 0.
      * </p>
      */
-    @Column(nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
-    private double productDiscountAmount;
+    @Column(nullable = false, columnDefinition = "Double PRECISION DEFAULT 0")
+    private Double productDiscountAmount;
 
     /**
      * Timestamp indicating when the product was created.
@@ -181,8 +172,8 @@ public class Product {
      * The default value of this column is 0.
      * </p>
      */
-    @Column(nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
-    private double productDiscountPrice;
+    @Column(nullable = false, columnDefinition = "Double PRECISION DEFAULT 0")
+    private Double productFinalPrice;
 
     /**
      * The percentage of discount applied to the product.
@@ -191,6 +182,6 @@ public class Product {
      * </p>
      */
     @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-    private int productDiscountPercentage = 0;
+    private Double productDiscountPercentage = 0.0;
 
 }

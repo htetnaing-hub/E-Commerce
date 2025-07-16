@@ -18,11 +18,10 @@ public class ProductConverter {
         return new Product(productDto.getProductId(),
                 productDto.getUser(),
                 productDto.getCategory(),
-                productDto.getWishLists(),
+                //productDto.getWishLists(),
                 productDto.getProductName(),
-                productDto.getProductRealPrice(),
+                productDto.getProductOriginalPrice(),
                 productDto.getProductDescription(),
-                productDto.getProductDiscountType(),
                 productDto.getProductDiscountAmount(),
                 productDto.getCreatedAt(),
                 productDto.getCreatedBy(),
@@ -31,7 +30,7 @@ public class ProductConverter {
                 productDto.getDeletedAt(),
                 productDto.getDeletedBy(),
                 productDto.isActive(),
-                productDto.getProductDiscountPrice(),
+                productDto.getProductFinalPrice(),
                 productDto.getProductDiscountPercentage());
     }
 
@@ -45,11 +44,10 @@ public class ProductConverter {
         return new ProductDto(product.getProductId(),
                 product.getUser(),
                 product.getCategory(),
-                product.getWishLists(),
+                //product.getWishLists(),
                 product.getProductName(),
-                product.getProductRealPrice(),
+                product.getProductOriginalPrice(),
                 product.getProductDescription(),
-                product.getProductDiscountType(),
                 product.getProductDiscountAmount(),
                 product.getCreatedAt(),
                 product.getCreatedBy(),
@@ -58,7 +56,7 @@ public class ProductConverter {
                 product.getDeletedAt(),
                 product.getDeletedBy(),
                 product.isActive(),
-                product.getProductDiscountPrice(),
+                product.getProductFinalPrice(),
                 product.getProductDiscountPercentage());
     }
 
