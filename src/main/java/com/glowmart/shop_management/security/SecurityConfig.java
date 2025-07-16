@@ -1,6 +1,7 @@
 package com.glowmart.shop_management.security;
 
 import com.glowmart.shop_management.api.CategoryAPI;
+import com.glowmart.shop_management.api.ProductAPI;
 import com.glowmart.shop_management.api.UserAPI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(UserAPI.BASE_PATH + UserAPI.USER_SIGN_UP,
                                 UserAPI.BASE_PATH + UserAPI.USER_LOGIN,
-                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST).permitAll()
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST,
+                                ProductAPI.BASE_PATH + ProductAPI.PRODUCT_CREATE).permitAll()
                         .requestMatchers(CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_CREATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_UPDATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_DELETE,

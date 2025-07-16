@@ -1,6 +1,7 @@
 package com.glowmart.shop_management.dto;
 
 import com.glowmart.shop_management.entity.Cart;
+import com.glowmart.shop_management.entity.Product;
 import com.glowmart.shop_management.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,6 +52,8 @@ public class UserDto {
      * </p>
      */
     private Set<Cart> cartList;
+
+    private List<Product> productList;
 
     /**
      * The username chosen by the user.

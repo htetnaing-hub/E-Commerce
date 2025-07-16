@@ -55,7 +55,7 @@ public class ProductDto {
      * It helps track which users have saved the product for future reference.
      * </p>
      */
-    private Set<WishList> wishLists;
+    //private Set<WishList> wishLists;
 
     /**
      * The name of the product.
@@ -77,7 +77,7 @@ public class ProductDto {
      * @see jakarta.validation.constraints.Min
      */
     @NotBlank(message = "Product real price is required.")
-    private double productRealPrice;
+    private Double productOriginalPrice;
 
     /**
      * A brief description of the product.
@@ -89,15 +89,6 @@ public class ProductDto {
     private String productDescription;
 
     /**
-     * The discount type applied to the product.
-     * <p>
-     * This could be a percentage-based discount or a fixed amount.
-     * </p>
-     */
-    @NotBlank(message = "Product discount type is required.")
-    private String productDiscountType;
-
-    /**
      * The discount amount applied to the product.
      * <p>
      * This field is required and must be a non-negative value.
@@ -107,7 +98,7 @@ public class ProductDto {
      */
     @NotBlank(message = "Product discount amount is required.")
     @Min(value = 0, message = "Product discount amount must be at least 0")
-    private double productDiscountAmount;
+    private Double productDiscountAmount;
 
     /**
      * Timestamp indicating when the product was created.
@@ -175,7 +166,7 @@ public class ProductDto {
      * </p>
      */
     @NotBlank(message = "Product discount price is required.")
-    private double productDiscountPrice;
+    private Double productFinalPrice;
 
     /**
      * The discount percentage applied to the product.
@@ -184,5 +175,5 @@ public class ProductDto {
      * </p>
      */
     @NotBlank(message = "Product discount percentage is required.")
-    private int productDiscountPercentage = 0;
+    private Double productDiscountPercentage = 0.0;
 }

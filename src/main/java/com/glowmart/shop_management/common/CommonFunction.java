@@ -33,4 +33,17 @@ public class CommonFunction {
         }
     }
 
+    public static boolean isValidPriceAndDiscount(Double originalPrice, Double discountPercentage){
+        if ((originalPrice != null && originalPrice > 0)
+                && (discountPercentage != null && discountPercentage >= 0 && discountPercentage <= 100)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Double calculateDiscountAmount(Double originalPrice, Double discountPercentage){
+        return originalPrice * (discountPercentage / 100);
+    }
+
 }
