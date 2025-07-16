@@ -16,6 +16,7 @@ public class ProductConverter {
      */
     public static Product convertToProduct(ProductDto productDto){
         return new Product(productDto.getProductId(),
+                productDto.getPhotoPath(),
                 productDto.getUser(),
                 productDto.getCategory(),
                 //productDto.getWishLists(),
@@ -42,6 +43,7 @@ public class ProductConverter {
      */
     public static ProductDto convertToProductDto(Product product){
         return new ProductDto(product.getProductId(),
+                product.getPhotoPath(),
                 product.getUser(),
                 product.getCategory(),
                 //product.getWishLists(),

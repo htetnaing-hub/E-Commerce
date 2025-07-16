@@ -32,6 +32,8 @@ public class ProductDto {
      */
     private Long productId;
 
+    private String photoPath;
+
     /**
      * The user who created the product.
      * <p>
