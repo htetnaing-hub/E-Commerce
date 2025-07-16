@@ -33,6 +33,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @Column(nullable = false)
+    private String photoPath;
+
     /**
      * The user who added the product.
      * <p>
