@@ -2,7 +2,7 @@ package com.glowmart.shop_management.controller;
 
 import com.glowmart.shop_management.api.CategoryAPI;
 import com.glowmart.shop_management.dto.CategoryDto;
-import com.glowmart.shop_management.exception.DuplicateCategoryException;
+import com.glowmart.shop_management.exception.DuplicateException;
 import com.glowmart.shop_management.exception.NotFoundException;
 import com.glowmart.shop_management.exception.NotValidException;
 import com.glowmart.shop_management.service.CategoryService;
@@ -27,7 +27,7 @@ public class CategoryController {
             return new ResponseEntity<>("Category is successfully created.", HttpStatus.CREATED);
         } catch (NotValidException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (DuplicateCategoryException e){
+        } catch (DuplicateException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
@@ -43,7 +43,7 @@ public class CategoryController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (DuplicateCategoryException e){
+        } catch (DuplicateException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch(Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

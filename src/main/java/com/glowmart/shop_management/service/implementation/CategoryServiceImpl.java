@@ -4,7 +4,7 @@ import com.glowmart.shop_management.common.CommonFunction;
 import com.glowmart.shop_management.converter.CategoryConverter;
 import com.glowmart.shop_management.dto.CategoryDto;
 import com.glowmart.shop_management.entity.Category;
-import com.glowmart.shop_management.exception.DuplicateCategoryException;
+import com.glowmart.shop_management.exception.DuplicateException;
 import com.glowmart.shop_management.exception.NotFoundException;
 import com.glowmart.shop_management.exception.NotValidException;
 import com.glowmart.shop_management.repository.CategoryRepository;
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
         categoryDto.setCategoryName(categoryDto.getCategoryName().toLowerCase());
         if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName())){
-            throw new DuplicateCategoryException(categoryDto.getCategoryName() + " is already exists!");
+            throw new DuplicateException(categoryDto.getCategoryName() + " is already exists!");
         }
         categoryDto.setCreatedAt(LocalDateTime.now());
         Category category = CategoryConverter.convertToCategory(categoryDto);
@@ -57,11 +57,11 @@ public class CategoryServiceImpl implements CategoryService {
         Category updateCategoryById = categoryById.get();
 
         if (categoryDto.getCategoryName().equalsIgnoreCase(updateCategoryById.getCategoryName())){
-            throw new DuplicateCategoryException(categoryDto.getCategoryName().toLowerCase() + " is same with the old category name!");
+            throw new DuplicateException(categoryDto.getCategoryName().toLowerCase() + " is same with the old category name!");
         }
 
         if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName().toLowerCase())){
-            throw new DuplicateCategoryException(categoryDto.getCategoryName().toLowerCase() + " is already exists!");
+            throw new DuplicateException(categoryDto.getCategoryName().toLowerCase() + " is already exists!");
         }
 
         updateCategoryById.setCategoryName(categoryDto.getCategoryName().toLowerCase());
