@@ -7,8 +7,11 @@ import com.glowmart.shop_management.converter.ProductConverter;
 import com.glowmart.shop_management.converter.UserConverter;
 import com.glowmart.shop_management.dto.ProductDto;
 import com.glowmart.shop_management.entity.Category;
+import com.glowmart.shop_management.entity.Product;
 import com.glowmart.shop_management.entity.User;
 import com.glowmart.shop_management.exception.DuplicateException;
+import com.glowmart.shop_management.exception.NotFoundException;
+import com.glowmart.shop_management.exception.NotValidException;
 import com.glowmart.shop_management.repository.ProductRepository;
 import com.glowmart.shop_management.service.CategoryService;
 import com.glowmart.shop_management.service.ProductService;
@@ -25,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto createProduct(String categoryName, boolean active, String productJson, MultipartFile file) throws IOException {
+
         // Parse JSON string to DTO
         ObjectMapper objectMapper = new ObjectMapper();
         ProductDto productDto = objectMapper.readValue(productJson, ProductDto.class);
@@ -51,24 +56,14 @@ public class ProductServiceImpl implements ProductService {
             throw new DuplicateException(productDto.getProductName() + " is already exists!");
         }
 
-        /*Create uploads directory if not exists*/
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path uploadPath = Paths.get("uploads");
-        if (Files.notExists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        /*Save file*/
-        Path filePath = uploadPath.resolve(fileName);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        /*Set image path in DB*/
-        productDto.setPhotoPath("/images/" + fileName);
+        /*Create product photo*/
+        String fileName = CommonFunction.createFile(file, productDto);
 
         /*Get authenticated user's email from JWT token*/
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
+        /*Get user by login email*/
         User user = UserConverter.convertToUser(userService.findUserByEmail(email));
         Category category = CategoryConverter.convertToCategory(categoryService.getCategoryByName(categoryName));
 
@@ -77,6 +72,7 @@ public class ProductServiceImpl implements ProductService {
         productDto.setProductFinalPrice(productDto.getProductOriginalPrice() - productDto.getProductDiscountAmount());
         productDto.setProductDescription(productDto.getProductDescription().toLowerCase());
         productDto.setProductName(productDto.getProductName().toLowerCase());
+        productDto.setPhotoPath("/images/" + fileName);
         productDto.setCreatedAt(LocalDateTime.now());
         productDto.setCreatedBy(user.getUserName());
         productDto.setCategory(category);
@@ -84,6 +80,67 @@ public class ProductServiceImpl implements ProductService {
         productDto.setUser(user);
 
         return ProductConverter.convertToProductDto(productRepository.save(ProductConverter.convertToProduct(productDto)));
+    }
+
+    @Override
+    public ProductDto updateProductById(String id, MultipartFile file, String productJson, String categoryName, boolean active) throws IOException {
+        // Parse JSON string to DTO
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductDto productDto = objectMapper.readValue(productJson, ProductDto.class);
+
+        if(CommonFunction.isValidId(id) == false){
+            throw new NotValidException("Product id is not valid! Id must be only number, not null and greater than 0.");
+        }
+
+        if (CommonFunction.isValidName(productDto.getProductName()) == false){
+            throw new NotValidException("Product name is not valid! Please enter letters and spaces.");
+        }
+
+        Long productId = Long.parseLong(id);
+        Optional<Product> productById = productRepository.findById(productId);
+
+        if(productById.isEmpty()){
+            throw new NotFoundException("There is no product by id:" + id + "!");
+        }
+
+        Product updateProductById = productById.get();
+
+        if (productDto.getProductName().equalsIgnoreCase(updateProductById.getProductName())){
+            throw new DuplicateException(productDto.getProductName().toLowerCase() + " is same with the old category name!");
+        }
+
+        if(productRepository.existsProductByName(productDto.getProductName().toLowerCase())){
+            throw new DuplicateException(productDto.getProductName().toLowerCase() + " is already exists!");
+        }
+
+        /*Create product photo*/
+        String fileName = CommonFunction.createFile(file, productDto);
+
+        /*Get authenticated user's email from JWT token*/
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        /*Get user by login email*/
+        User user = UserConverter.convertToUser(userService.findUserByEmail(email));
+        Category category = CategoryConverter.convertToCategory(categoryService.getCategoryByName(categoryName));
+
+        /*Calculate discount amount*/
+        Double discountAmount = CommonFunction.calculateDiscountAmount(
+                productDto.getProductOriginalPrice(),
+                productDto.getProductDiscountPercentage()
+        );
+
+        updateProductById.setProductOriginalPrice(productDto.getProductOriginalPrice());
+        updateProductById.setProductDiscountAmount(discountAmount);
+        updateProductById.setProductFinalPrice(productDto.getProductOriginalPrice() - discountAmount);
+        updateProductById.setProductDescription(productDto.getProductDescription().toLowerCase());
+        updateProductById.setProductName(productDto.getProductName().toLowerCase());
+        updateProductById.setPhotoPath("/images/" + fileName);
+        updateProductById.setUpdatedAt(LocalDateTime.now());
+        updateProductById.setUpdatedBy(user.getUserName());
+        updateProductById.setCategory(category);
+        updateProductById.setActive(active);
+        return ProductConverter.convertToProductDto(productRepository.save(updateProductById));
     }
 
     @Override

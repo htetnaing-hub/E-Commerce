@@ -1,5 +1,15 @@
 package com.glowmart.shop_management.common;
 
+import com.glowmart.shop_management.dto.ProductDto;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+
 public class CommonFunction {
 
     public static boolean isValidName(String name){
@@ -44,6 +54,20 @@ public class CommonFunction {
 
     public static Double calculateDiscountAmount(Double originalPrice, Double discountPercentage){
         return originalPrice * (discountPercentage / 100);
+    }
+
+    public static String createFile(MultipartFile file, ProductDto productDto) throws IOException {
+        /*Create uploads directory if not exists*/
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads");
+        if (Files.notExists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        /*Save file*/
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        return fileName;
     }
 
 }

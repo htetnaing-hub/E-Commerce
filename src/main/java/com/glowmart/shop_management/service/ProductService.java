@@ -10,6 +10,7 @@ import java.io.IOException;
 public interface ProductService {
 
     ProductDto createProduct(String categoryName, boolean active, String productJson, MultipartFile file) throws IOException;
+    ProductDto updateProductById(String id, MultipartFile file, String productJson, String categoryName, boolean active) throws IOException;
     ProductDto getProductByName(String name);
 
 }

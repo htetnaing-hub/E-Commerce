@@ -98,8 +98,8 @@ public class ProductDto {
      *
      * @see jakarta.validation.constraints.Min
      */
-    @NotBlank(message = "Product discount amount is required.")
-    @Min(value = 0, message = "Product discount amount must be at least 0")
+//    @NotBlank(message = "Product discount amount is required.")
+//    @Min(value = 0, message = "Product discount amount must be at least 0")
     private Double productDiscountAmount;
 
     /**
