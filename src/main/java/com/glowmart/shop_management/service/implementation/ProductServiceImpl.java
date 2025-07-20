@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -84,20 +81,26 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto updateProductById(String id, MultipartFile file, String productJson, String categoryName, boolean active) throws IOException {
-        // Parse JSON string to DTO
-        ObjectMapper objectMapper = new ObjectMapper();
-        ProductDto productDto = objectMapper.readValue(productJson, ProductDto.class);
-
         if(CommonFunction.isValidId(id) == false){
             throw new NotValidException("Product id is not valid! Id must be only number, not null and greater than 0.");
         }
+        Long productId = Long.parseLong(id);
+        Optional<Product> productById = productRepository.findById(productId);
+        String ownerEmail = productById.get().getUser().getUserEmail();
 
+        /*Get authenticated user's email from JWT token*/
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginEmail = authentication.getName();
+        if (!loginEmail.equals(ownerEmail)){
+            throw new AccessDeniedException("You are not allowed to update another user's product!\nYou can update only your products!");
+        }
+
+        // Parse JSON string to DTO
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductDto productDto = objectMapper.readValue(productJson, ProductDto.class);
         if (CommonFunction.isValidName(productDto.getProductName()) == false){
             throw new NotValidException("Product name is not valid! Please enter letters and spaces.");
         }
-
-        Long productId = Long.parseLong(id);
-        Optional<Product> productById = productRepository.findById(productId);
 
         if(productById.isEmpty()){
             throw new NotFoundException("There is no product by id:" + id + "!");
@@ -116,12 +119,8 @@ public class ProductServiceImpl implements ProductService {
         /*Create product photo*/
         String fileName = CommonFunction.createFile(file, productDto);
 
-        /*Get authenticated user's email from JWT token*/
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
         /*Get user by login email*/
-        User user = UserConverter.convertToUser(userService.findUserByEmail(email));
+        User user = UserConverter.convertToUser(userService.findUserByEmail(loginEmail));
         Category category = CategoryConverter.convertToCategory(categoryService.getCategoryByName(categoryName));
 
         /*Calculate discount amount*/
@@ -131,6 +130,7 @@ public class ProductServiceImpl implements ProductService {
         );
 
         updateProductById.setProductOriginalPrice(productDto.getProductOriginalPrice());
+        updateProductById.setProductDiscountPercentage(productDto.getProductDiscountPercentage());
         updateProductById.setProductDiscountAmount(discountAmount);
         updateProductById.setProductFinalPrice(productDto.getProductOriginalPrice() - discountAmount);
         updateProductById.setProductDescription(productDto.getProductDescription().toLowerCase());
@@ -146,5 +146,22 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto getProductByName(String name) {
         return null;
+    }
+
+    @Override
+    public ProductDto deleteProductById(Long id) throws AccessDeniedException {
+        Optional<Product> productById = productRepository.findById(id);
+        if (productById.isEmpty()){
+            throw new NotFoundException("There is no product by id:" + id + "!");
+        }
+        /*Get authenticated user's email from JWT token*/
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginEmail = authentication.getName();
+        String ownerEmail = productById.get().getUser().getUserEmail();
+        if (!loginEmail.equals(ownerEmail)){
+            throw new AccessDeniedException("You are not allowed to delete another user's product!\nYou can delete only your products!");
+        }
+        productRepository.deleteById(id);
+        return ProductConverter.convertToProductDto(productById.get());
     }
 }

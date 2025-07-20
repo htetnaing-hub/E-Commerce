@@ -57,4 +57,16 @@ public class ProductController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
+
+    @DeleteMapping(ProductAPI.PRODUCT_DELETE)
+    public ResponseEntity<?> deleteProductById(@PathVariable("id") Long id){
+        try {
+            ProductDto deletedProduct = productService.deleteProductById(id);
+            return new ResponseEntity<>(deletedProduct.getProductName() + " is successfully deleted from Product.", HttpStatus.OK);
+        } catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
 }
