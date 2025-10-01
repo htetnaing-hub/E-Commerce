@@ -11,10 +11,12 @@ import com.glowmart.shop_management.repository.CategoryRepository;
 import com.glowmart.shop_management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,19 +24,26 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<>();
 
     @Override
+    @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
         if (CommonFunction.isValidName(categoryDto.getCategoryName()) == false){
             throw new NotValidException("Category name is not valid! Please enter letters and spaces.");
         }
         categoryDto.setCategoryName(categoryDto.getCategoryName().toLowerCase());
-        if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName())){
-            throw new DuplicateException(categoryDto.getCategoryName() + " is already exists!");
+
+        Object lock = locks.computeIfAbsent(categoryDto.getCategoryName(), k -> new Object());
+
+        synchronized (lock) {
+            if(categoryRepository.existsCategoryByName(categoryDto.getCategoryName())){
+                throw new DuplicateException(categoryDto.getCategoryName() + " is already exists!");
+            }
+            categoryDto.setCreatedAt(LocalDateTime.now());
+            Category category = CategoryConverter.convertToCategory(categoryDto);
+            return CategoryConverter.convertToCategoryDto(categoryRepository.save(category));
         }
-        categoryDto.setCreatedAt(LocalDateTime.now());
-        Category category = CategoryConverter.convertToCategory(categoryDto);
-        return CategoryConverter.convertToCategoryDto(categoryRepository.save(category));
     }
 
     @Override

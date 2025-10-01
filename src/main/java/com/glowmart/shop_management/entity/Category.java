@@ -38,7 +38,7 @@ public class Category {
      * It represents the name of the product category (e.g., "Electronics", "Clothing").
      * </p>
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String categoryName;
 
     /**

@@ -6,6 +6,9 @@ import com.glowmart.shop_management.security.CustomUserDetailsService;
 import com.glowmart.shop_management.security.JwtUtil;
 import com.glowmart.shop_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 /**
  * Controller for managing users.
@@ -69,4 +74,21 @@ public class UserController {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
         return jwtUtil.generateToken(userDetails);
     }
+
+    /**
+     * Retrieves a paginated list of users using keyset pagination.
+     * Returns users whose IDs are greater than the specified lastId.
+     *
+     * @param lastId The last user ID from the previous page (default is 0).
+     * @param size   The maximum number of users to return (default is 10).
+     * @return A list of {@link UserDto} objects representing the next page of users.
+     */
+    @GetMapping(UserAPI.USER_LIST)
+    public List<UserDto> getUsersKeyset(
+            @RequestParam(defaultValue = "0") Long lastId,
+            @RequestParam(defaultValue = "100") int size
+    ) {
+        return userService.findUsersAfterId(lastId, size);
+    }
+
 }

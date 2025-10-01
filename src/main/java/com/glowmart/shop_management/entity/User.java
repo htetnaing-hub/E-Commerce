@@ -22,7 +22,8 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table (name = "users")
+@Table (name = "users",
+indexes = {@Index(name = "idx_user_name", columnList = "userName")})
 public class User {
 
     /**
@@ -56,9 +57,21 @@ public class User {
      * </p>
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Cart> cartList;
 
+    /**
+     * The list of products associated with this user.
+     * <p>
+     * This represents a one-to-many relationship where a user can be linked to multiple products.
+     * The cascade configuration ensures that product changes are propagated when the user is updated.
+     * </p>
+     * <p>
+     * This field is ignored during JSON serialization to avoid circular references or excessive payload.
+     * </p>
+     */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Product> productList;
 
     /**

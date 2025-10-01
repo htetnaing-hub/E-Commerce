@@ -28,9 +28,6 @@ public class UserConverter {
     public static User convertToUser(UserDto userDto){
         User user = new User();
         user.setUserId(userDto.getUserId());
-        user.setRole(userDto.getRole());
-        user.setCartList(userDto.getCartList());
-        user.setProductList(userDto.getProductList());
         user.setUserName(userDto.getUserName());
         user.setUserEmail(userDto.getUserEmail());
         user.setUserPhone(userDto.getUserPhone());
@@ -55,9 +52,7 @@ public class UserConverter {
     public static UserDto convertToUserDto(User user){
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
-        userDto.setRole(user.getRole());
-        userDto.setCartList(user.getCartList());
-        userDto.setProductList(user.getProductList());
+        userDto.setRoleName(user.getRole().getRoleName());
         userDto.setUserName(user.getUserName());
         userDto.setUserEmail(user.getUserEmail());
         userDto.setUserPhone(user.getUserPhone());

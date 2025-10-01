@@ -45,6 +45,15 @@ public class UserDto {
     private Role role;
 
     /**
+     * The name of the role assigned to the user.
+     * <p>
+     * This is a simplified string representation of the user's role, often used for display
+     * or filtering purposes without requiring full role entity access.
+     * </p>
+     */
+    private String roleName;
+
+    /**
      * List of carts associated with the user.
      * <p>
      * This field contains all carts owned by the user. It represents a one-to-many
@@ -53,6 +62,13 @@ public class UserDto {
      */
     private Set<Cart> cartList;
 
+    /**
+     * List of products associated with the user.
+     * <p>
+     * This field holds products linked to the user, which may represent purchases,
+     * favorites, or other user-specific product interactions depending on the business logic.
+     * </p>
+     */
     private List<Product> productList;
 
     /**

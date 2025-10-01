@@ -36,4 +36,13 @@ public final class UserAPI {
      * </p>
      */
     public static final String USER_LOGIN = "/login";
+
+    /**
+     * The path for the user list retrieval endpoint.
+     * <p>
+     * This endpoint returns a paginated list of users. The path is static and does not include any dynamic
+     * parameters or placeholders.
+     * </p>
+     */
+    public static final String USER_LIST = "/user-list";
 }

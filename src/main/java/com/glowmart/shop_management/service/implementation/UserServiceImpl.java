@@ -10,8 +10,14 @@ import com.glowmart.shop_management.exception.DuplicateEmailException;
 import com.glowmart.shop_management.repository.RoleRepository;
 import com.glowmart.shop_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -55,4 +61,15 @@ public class UserServiceImpl implements UserService {
     public boolean userExistsByEmail(String userEmail) {
         return userRepository.userExistsByEmail(userEmail);
     }
+
+    @Override
+    public List<UserDto> findUsersAfterId(Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size, Sort.by("userId").ascending());
+        List<User> users = userRepository.findNextPage(lastId, pageable);
+        return users.stream()
+                .map(UserConverter::convertToUserDto)
+                .sorted(Comparator.comparing(UserDto::getUserId))
+                .collect(Collectors.toList());
+    }
+
 }
