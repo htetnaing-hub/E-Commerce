@@ -13,4 +13,5 @@ public interface ProductService {
     ProductDto getProductByName(String name);
     ProductDto deleteProductById(Long id) throws AccessDeniedException;
 
+    ProductDto getProductById(String id);
 }

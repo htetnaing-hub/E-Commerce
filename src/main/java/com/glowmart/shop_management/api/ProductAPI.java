@@ -6,5 +6,6 @@ public final class ProductAPI {
     public static final String PRODUCT_CREATE = "/create";
     public static final String PRODUCT_UPDATE = "/update/{id}";
     public static final String PRODUCT_DELETE = "/delete/{id}";
+    public static final String PRODUCT_BY_ID = "/get-by-id";
 
 }
