@@ -43,7 +43,8 @@ public class SecurityConfig {
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_CREATE,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_UPDATE,
-                                ProductAPI.BASE_PATH + ProductAPI.PRODUCT_DELETE).permitAll()
+                                ProductAPI.BASE_PATH + ProductAPI.PRODUCT_DELETE,
+                                ProductAPI.BASE_PATH + ProductAPI.PRODUCT_BY_ID).permitAll()
                         .requestMatchers(UserAPI.BASE_PATH + UserAPI.USER_LIST,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_CREATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_UPDATE,

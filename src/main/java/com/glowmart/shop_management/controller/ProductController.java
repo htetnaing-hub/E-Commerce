@@ -69,4 +69,18 @@ public class ProductController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
+
+    @GetMapping(ProductAPI.PRODUCT_BY_ID)
+    public ResponseEntity<?> getProductById(@RequestParam("id") String id){
+        try {
+            ProductDto productDto = productService.getProductById(id);
+            return ResponseEntity.ok(productDto);
+        } catch (NotValidException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
 }

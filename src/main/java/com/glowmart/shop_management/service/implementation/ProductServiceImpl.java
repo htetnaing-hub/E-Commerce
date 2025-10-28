@@ -164,4 +164,15 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
         return ProductConverter.convertToProductDto(productById.get());
     }
+
+    @Override
+    public ProductDto getProductById(String id) {
+        if (CommonFunction.isValidId(id) == false) {
+            throw new NotValidException("Product id is not valid! Id must be only number, not null and greater than 0.");
+        }
+        Long productId = Long.parseLong(id);
+        return productRepository.findById(productId)
+                .map(ProductConverter::convertToProductDto)
+                .orElseThrow(() -> new NotFoundException("There is no product by id:" + id + "!"));
+    }
 }
