@@ -51,6 +51,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateLoginTime(String email) {
+        userRepository.updateLoginTime(email);
+    }
+
+    @Override
     public UserDto findUserByEmail(String userEmail) {
         User user = userRepository.findUserByEmail(userEmail);
         UserDto userDto = UserConverter.convertToUserDto(user);
