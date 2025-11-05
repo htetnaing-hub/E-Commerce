@@ -29,7 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findNextPage(@Param("lastId") Long lastId, Pageable pageable);
 
     @Modifying
-    @Transactional
     @Query("UPDATE User u SET u.lastLoginTime = CURRENT_TIMESTAMP WHERE u.userEmail = :email")
     void updateLoginTime(@Param("email") String email);
 
