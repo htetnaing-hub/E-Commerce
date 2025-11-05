@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -72,6 +73,11 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+
+        if (userService.userExistsByEmail(email)) {
+            userService.updateLoginTime(email);
+        }
+
         return jwtUtil.generateToken(userDetails);
     }
 

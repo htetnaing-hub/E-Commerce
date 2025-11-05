@@ -10,6 +10,8 @@ public interface UserService {
 
     UserDto createUser(String role, UserDto userDto);
 
+    void updateLoginTime(String email);
+
     UserDto findUserByEmail(String userEmail);
 
     boolean userExistsByEmail(String userEmail);

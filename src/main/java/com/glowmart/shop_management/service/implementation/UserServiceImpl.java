@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +50,12 @@ public class UserServiceImpl implements UserService {
         user.setRole(resultRole);
         user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
         return UserConverter.convertToUserDto(userRepository.save(user));
+    }
+
+    @Override
+    @Transactional
+    public void updateLoginTime(String email) {
+        userRepository.updateLoginTime(email);
     }
 
     @Override
