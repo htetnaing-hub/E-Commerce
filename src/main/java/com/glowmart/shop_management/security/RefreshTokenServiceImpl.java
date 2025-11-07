@@ -4,6 +4,7 @@ import com.glowmart.shop_management.entity.RefreshToken;
 import com.glowmart.shop_management.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -31,6 +32,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     }
 
     @Override
+    @Transactional
     public void invalidateToken(String refreshToken) {
         refreshTokenRepository.deleteByToken(refreshToken);
     }

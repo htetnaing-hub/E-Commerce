@@ -40,6 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(UserAPI.BASE_PATH + UserAPI.USER_SIGN_UP,
                                 UserAPI.BASE_PATH + UserAPI.USER_LOGIN,
+                                UserAPI.BASE_PATH + UserAPI.REFRESH_TOKEN,
+                                UserAPI.BASE_PATH + UserAPI.USER_LOGOUT,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_CREATE,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_UPDATE,
