@@ -16,7 +16,6 @@ public class JwtUtil {
 
     /* Do NOT keep secrets in source code in production; use env / vault */
     private static final String SECRET = "12121998hna12121998hna12121998hna"; // ≥ 256‑bit for HS256
-    //private static final long EXP_MS = 1_000 * 60 * 60;   // 1 hour
 
     private static final long ACCESS_TOKEN_EXP_MS = 15 * 60 * 1000; // 15 minutes
 
