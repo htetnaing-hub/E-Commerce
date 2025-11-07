@@ -30,6 +30,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Handles {@link NotValidException} and returns a response with a 400 Bad Request status.
+     * <p>
+     * This method is invoked when an invalid name is provided in a request,
+     * ensuring clients receive a clear error message along with the appropriate
+     * HTTP status code.
+     * </p>
+     *
+     * @param exception the exception thrown when a provided name is not valid
+     * @return a {@link ResponseEntity} containing the exception message and HTTP status
+     */
     public ResponseEntity<String> handleNotValidNameException(NotValidException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }

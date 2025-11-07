@@ -28,6 +28,16 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Implementation of {@link ProductService} that provides business logic
+ * for managing {@link Product} entities.
+ * <p>
+ * This service handles product creation, updating, deletion, and retrieval.
+ * It validates input data, enforces ownership rules, manages product images,
+ * and throws custom exceptions such as {@link NotValidException},
+ * {@link DuplicateException}, {@link NotFoundException}, and {@link AccessDeniedException}.
+ * </p>
+ */
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -38,6 +48,23 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * Creates a new product under the specified category.
+     * <p>
+     * Validates product details, generates a product image file,
+     * associates the product with the authenticated user,
+     * and calculates discount amounts before saving.
+     * </p>
+     *
+     * @param categoryName the name of the category to assign the product to
+     * @param active flag indicating whether the product is active
+     * @param productJson JSON string containing product details
+     * @param file the product image file
+     * @return the created {@link ProductDto}
+     * @throws IOException if an error occurs while processing the image file
+     * @throws IllegalArgumentException if price or discount values are invalid
+     * @throws DuplicateException if a product with the same name already exists
+     */
     @Override
     public ProductDto createProduct(String categoryName, boolean active, String productJson, MultipartFile file) throws IOException {
 
@@ -79,6 +106,26 @@ public class ProductServiceImpl implements ProductService {
         return ProductConverter.convertToProductDto(productRepository.save(ProductConverter.convertToProduct(productDto)));
     }
 
+    /**
+     * Updates an existing product by its ID.
+     * <p>
+     * Ensures that only the product owner can update the product,
+     * validates new product details, updates product image and category,
+     * and recalculates discount amounts.
+     * </p>
+     *
+     * @param id the ID of the product to update
+     * @param file the new product image file
+     * @param productJson JSON string containing updated product details
+     * @param categoryName the new category name
+     * @param active flag indicating whether the product is active
+     * @return the updated {@link ProductDto}
+     * @throws IOException if an error occurs while processing the image file
+     * @throws NotValidException if the product ID or name is invalid
+     * @throws NotFoundException if no product exists with the given ID
+     * @throws DuplicateException if the new product name already exists
+     * @throws AccessDeniedException if the authenticated user is not the product owner
+     */
     @Override
     public ProductDto updateProductById(String id, MultipartFile file, String productJson, String categoryName, boolean active) throws IOException {
         if(CommonFunction.isValidId(id) == false){
@@ -143,11 +190,28 @@ public class ProductServiceImpl implements ProductService {
         return ProductConverter.convertToProductDto(productRepository.save(updateProductById));
     }
 
+    /**
+     * Retrieves a product by its name.
+     *
+     * @param name the name of the product
+     * @return the found {@link ProductDto}, or {@code null} if not implemented
+     */
     @Override
     public ProductDto getProductByName(String name) {
         return null;
     }
 
+    /**
+     * Deletes a product by its ID.
+     * <p>
+     * Ensures that only the product owner can delete the product.
+     * </p>
+     *
+     * @param id the ID of the product to delete
+     * @return the deleted {@link ProductDto}
+     * @throws NotFoundException if no product exists with the given ID
+     * @throws AccessDeniedException if the authenticated user is not the product owner
+     */
     @Override
     public ProductDto deleteProductById(Long id) throws AccessDeniedException {
         Optional<Product> productById = productRepository.findById(id);
@@ -165,6 +229,14 @@ public class ProductServiceImpl implements ProductService {
         return ProductConverter.convertToProductDto(productById.get());
     }
 
+    /**
+     * Retrieves a product by its ID.
+     *
+     * @param id the ID of the product
+     * @return the found {@link ProductDto}
+     * @throws NotValidException if the product ID is invalid
+     * @throws NotFoundException if no product exists with the given ID
+     */
     @Override
     public ProductDto getProductById(String id) {
         if (CommonFunction.isValidId(id) == false) {

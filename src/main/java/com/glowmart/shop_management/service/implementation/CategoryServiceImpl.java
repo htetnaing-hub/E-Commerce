@@ -19,6 +19,16 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of {@link CategoryService} that provides business logic
+ * for managing {@link Category} entities.
+ * <p>
+ * This service handles creation, updating, deletion, and retrieval of categories.
+ * It performs validation on input data, ensures uniqueness of category names,
+ * and throws appropriate custom exceptions such as {@link NotValidException},
+ * {@link DuplicateException}, and {@link NotFoundException}.
+ * </p>
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -26,6 +36,14 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
     private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a new category after validating its name and ensuring uniqueness.
+     *
+     * @param categoryDto the DTO containing category details
+     * @return the created {@link CategoryDto}
+     * @throws NotValidException if the category name is invalid
+     * @throws DuplicateException if a category with the same name already exists
+     */
     @Override
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
@@ -46,6 +64,16 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    /**
+     * Updates an existing category by its ID.
+     *
+     * @param id the ID of the category to update
+     * @param categoryDto the DTO containing updated category details
+     * @return the updated {@link CategoryDto}
+     * @throws NotValidException if the ID or category name is invalid
+     * @throws NotFoundException if no category exists with the given ID
+     * @throws DuplicateException if the new category name already exists or matches the old one
+     */
     @Override
     public CategoryDto updateCategoryById(String id, CategoryDto categoryDto) {
         if(CommonFunction.isValidId(id) == false){
@@ -82,6 +110,14 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    /**
+     * Deletes a category by its ID.
+     *
+     * @param id the ID of the category to delete
+     * @return the deleted {@link CategoryDto}
+     * @throws NotValidException if the ID is invalid
+     * @throws NotFoundException if no category exists with the given ID
+     */
     @Override
     public CategoryDto deleteCategoryById(String id) {
         if(CommonFunction.isValidId(id) == false){
@@ -101,6 +137,11 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryConverter.convertToCategoryDto(categoryById.get());
     }
 
+    /**
+     * Retrieves all categories from the repository.
+     *
+     * @return a list of {@link CategoryDto} representing all categories
+     */
     @Override
     public List<CategoryDto> getAllCategory() {
         try {
@@ -111,6 +152,14 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    /**
+     * Retrieves a category by its ID.
+     *
+     * @param id the ID of the category to retrieve
+     * @return the found {@link CategoryDto}
+     * @throws NotValidException if the ID is invalid
+     * @throws NotFoundException if no category exists with the given ID
+     */
     @Override
     public CategoryDto getCategoryById(String id) {
         if (CommonFunction.isValidId(id) == false){
@@ -122,6 +171,14 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new NotFoundException("There is no category by id:" + id + "!"));
     }
 
+    /**
+     * Retrieves a category by its name.
+     *
+     * @param name the name of the category to retrieve
+     * @return the found {@link CategoryDto}
+     * @throws NotValidException if the name is invalid
+     * @throws NotFoundException if no category exists with the given name
+     */
     @Override
     public CategoryDto getCategoryByName(String name) {
         if (CommonFunction.isValidName(name) == false){
