@@ -5,5 +5,5 @@ Everybody can buy anything by using this system.
 
 ## 📖 Javadoc Documentation
 
-[Javadoc API Reference](https://htetnaing-hub.github.io/shop-management/apidocs/index.html)
+- [Javadoc API Reference](https://htetnaing-hub.github.io/E-Commerce/apidocs/index.html)
 
