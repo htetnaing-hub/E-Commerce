@@ -19,7 +19,29 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 /**
- * Controller for managing users.
+ * REST controller for managing user operations.
+ * <p>
+ * This controller provides endpoints for user registration, authentication,
+ * token refresh, logout, and user retrieval. It delegates business logic to
+ * the {@link UserService}, handles authentication via Spring Security's
+ * {@link AuthenticationManager}, and manages token generation and validation
+ * using {@link JwtUtil} and {@link RefreshTokenService}.
+ * </p>
+ *
+ * <h3>Available Endpoints:</h3>
+ * <ul>
+ *   <li><b>POST</b> {@code /api/user/{role}/sign-up} – Register a new user with a given role.</li>
+ *   <li><b>POST</b> {@code /api/user/login} – Authenticate a user and issue JWT access/refresh tokens.</li>
+ *   <li><b>POST</b> {@code /api/user/refresh} – Refresh the access token using a valid refresh token.</li>
+ *   <li><b>POST</b> {@code /api/user/logout} – Invalidate a refresh token to log out the user.</li>
+ *   <li><b>GET</b> {@code /api/user/user-list} – Retrieve a paginated list of users using keyset pagination.</li>
+ * </ul>
+ *
+ * <p>
+ * Exception handling is performed at the controller level, returning appropriate
+ * HTTP status codes such as {@code 400 Bad Request}, {@code 401 Unauthorized},
+ * {@code 404 Not Found}, or {@code 409 Conflict} depending on the error.
+ * </p>
  */
 @RestController
 @RequestMapping(UserAPI.BASE_PATH)
