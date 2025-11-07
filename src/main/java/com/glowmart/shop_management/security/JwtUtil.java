@@ -16,14 +16,25 @@ public class JwtUtil {
 
     /* Do NOT keep secrets in source code in production; use env / vault */
     private static final String SECRET = "12121998hna12121998hna12121998hna"; // ≥ 256‑bit for HS256
-    private static final long   EXP_MS = 1_000 * 60 * 60;   // 1 hour
+
+    private static final long ACCESS_TOKEN_EXP_MS = 15 * 60 * 1000; // 15 minutes
+
+    private static final long REFRESH_TOKEN_EXP_MS = 24 * 60 * 60 * 1000; // 1 days
 
     /** JJWT 0.9.1 can take a byte[] key; we pre‑build it once for safety. */
     private static final Key SIGN_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    /* ---------- 1. BUILD TOKEN -------------------------------------- */
+    /* ---------- 1. BUILD TOKENS -------------------------------------- */
 
-    public String generateToken(UserDetails user) {
+    public String generateAccessToken(UserDetails user) {
+        return generateToken(user, ACCESS_TOKEN_EXP_MS);
+    }
+
+    public String generateRefreshToken(UserDetails user) {
+        return generateToken(user, REFRESH_TOKEN_EXP_MS);
+    }
+
+    public String generateToken(UserDetails user, long expirationMs) {
 
         List<String> roles = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority) // ROLE_ADMIN …
@@ -36,7 +47,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXP_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(SignatureAlgorithm.HS256, SIGN_KEY)
                 .compact();
     }

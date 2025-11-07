@@ -2,13 +2,12 @@ package com.glowmart.shop_management.controller;
 
 import com.glowmart.shop_management.api.UserAPI;
 import com.glowmart.shop_management.dto.UserDto;
+import com.glowmart.shop_management.security.AuthResponse;
 import com.glowmart.shop_management.security.CustomUserDetailsService;
 import com.glowmart.shop_management.security.JwtUtil;
+import com.glowmart.shop_management.security.RefreshTokenService;
 import com.glowmart.shop_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -35,6 +33,9 @@ public class UserController {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -62,23 +63,40 @@ public class UserController {
      * @return A JWT token if authentication is successful.
      */
     @PostMapping(UserAPI.USER_LOGIN)
-    public String login(@RequestParam String email, @RequestParam String password) {
-
-        System.out.println("Email: " + email);
+    public ResponseEntity<AuthResponse> login(@RequestParam String email, @RequestParam String password) {
 
         try {
+            // Authenticate user credentials
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (Exception e) {
             System.out.println("Authentication failed: " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
+
+        // Load user details
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
+        // Update login time if user exists
         if (userService.userExistsByEmail(email)) {
             userService.updateLoginTime(email);
         }
 
-        return jwtUtil.generateToken(userDetails);
+        // Generate tokens
+        String accessToken = jwtUtil.generateAccessToken(userDetails);
+        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+        // Optionally store refresh token in DB or cache for logout/revocation
+        refreshTokenService.storeToken(userDetails.getUsername(), refreshToken);
+
+        // Build structured response
+        AuthResponse response = new AuthResponse(
+                accessToken,
+                refreshToken,
+                userDetails.getUsername(),
+                "Login successful"
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     /**
