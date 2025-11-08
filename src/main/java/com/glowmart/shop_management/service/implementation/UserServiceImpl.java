@@ -1,10 +1,13 @@
 package com.glowmart.shop_management.service.implementation;
 
+import com.glowmart.shop_management.common.CommonFunction;
 import com.glowmart.shop_management.converter.UserConverter;
 import com.glowmart.shop_management.dto.UserDto;
 import com.glowmart.shop_management.entity.Role;
 import com.glowmart.shop_management.entity.User;
+import com.glowmart.shop_management.exception.DuplicateException;
 import com.glowmart.shop_management.exception.NotFoundException;
+import com.glowmart.shop_management.exception.NotValidException;
 import com.glowmart.shop_management.service.UserService;
 import com.glowmart.shop_management.exception.DuplicateEmailException;
 import com.glowmart.shop_management.repository.RoleRepository;
@@ -17,8 +20,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -129,6 +134,81 @@ public class UserServiceImpl implements UserService {
                 .map(UserConverter::convertToUserDto)
                 .sorted(Comparator.comparing(UserDto::getUserId))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Updates the user information for the specified user ID.
+     * <p>
+     * This method performs validation on the input parameters and ensures that the new email and phone number
+     * do not conflict with existing records. It throws exceptions for invalid input, non-existent users,
+     * or duplicate data. If all checks pass, the user's email, name, and phone number are updated in the database.
+     * </p>
+     *
+     * @param id    the unique identifier of the user to update; must be a valid numeric string
+     * @param email the new email address; must not match the current email or any existing user's email
+     * @param name  the new name; must contain only letters and spaces
+     * @param phone the new phone number; must not match the current phone or any existing user's phone
+     * @throws NotValidException   if the ID or name format is invalid
+     * @throws NotFoundException   if no user exists with the given ID
+     * @throws DuplicateException  if the email or phone number is unchanged or already used by another user
+     * @throws RuntimeException    if an unexpected error occurs during database save
+     */
+    @Override
+    public void updateUserById(String id, String email, String name, String phone) {
+        if(CommonFunction.isValidId(id) == false){
+            throw new NotValidException("User id is not valid! Id must be only number, not null and greater than 0.");
+        }
+
+        if (CommonFunction.isValidName(name) == false){
+            throw new NotValidException("User name is not valid! Please enter letters and spaces.");
+        }
+
+        Long userId = Long.parseLong(id);
+        Optional<User> userById = userRepository.findById(userId);
+
+        if (userById.isEmpty()) {
+            throw new NotFoundException("There is no user by id:" + id + "!");
+        }
+
+        if (email.equalsIgnoreCase(userById.get().getUserEmail())) {
+            throw new DuplicateException(email.toLowerCase() + " is same with old your email!");
+        }
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new DuplicateException(email.toLowerCase() + " is already exists!");
+        }
+
+        if (phone.equalsIgnoreCase(userById.get().getUserPhone())) {
+            throw new DuplicateException(phone.toLowerCase() + " is same with old your phone number!");
+        }
+
+        if (userRepository.findByPhone(phone).isPresent()) {
+            throw new DuplicateException(phone + " is already exists!");
+        }
+
+        userById.get().setUserEmail(email);
+        userById.get().setUserName(name);
+        userById.get().setUserPhone(phone);
+        userById.get().setUpdatedAt(LocalDateTime.now());
+
+        try {
+            userRepository.save(userById.get());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Retrieves a user by their unique ID and converts the result to a {@link UserDto}.
+     *
+     * @param id the unique identifier of the user to retrieve; must be a valid numeric string
+     * @return a {@link UserDto} representing the user with the given ID
+     */
+    @Override
+    public UserDto findUserById(String id) {
+        Long userId = Long.parseLong(id);
+        User user = userRepository.findById(userId).get();
+        return UserConverter.convertToUserDto(user);
     }
 
 }
