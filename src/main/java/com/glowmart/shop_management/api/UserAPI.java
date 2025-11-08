@@ -63,4 +63,13 @@ public final class UserAPI {
      * </p>
      */
     public static final String USER_LIST = "/user-list";
+
+    /**
+     * The path for the user update endpoint.
+     * <p>
+     * This endpoint is used to update user details. It includes a dynamic path parameter <code>{id}</code>,
+     * which should be replaced with the unique identifier of the user to be updated.
+     * </p>
+     */
+    public static final String USER_UPDATE = "/update/{id}";
 }

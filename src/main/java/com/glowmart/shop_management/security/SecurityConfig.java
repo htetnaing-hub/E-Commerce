@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 UserAPI.BASE_PATH + UserAPI.USER_LOGIN,
                                 UserAPI.BASE_PATH + UserAPI.REFRESH_TOKEN,
                                 UserAPI.BASE_PATH + UserAPI.USER_LOGOUT,
+                                UserAPI.BASE_PATH + UserAPI.USER_UPDATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_LIST,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_CREATE,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_UPDATE,

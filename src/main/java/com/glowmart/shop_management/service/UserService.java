@@ -17,4 +17,8 @@ public interface UserService {
     boolean userExistsByEmail(String userEmail);
 
     List<UserDto> findUsersAfterId(Long lastId, int size);
+
+    void updateUserById(String id, String email, String name, String phone);
+
+    UserDto findUserById(String id);
 }

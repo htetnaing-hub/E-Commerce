@@ -2,6 +2,9 @@ package com.glowmart.shop_management.controller;
 
 import com.glowmart.shop_management.api.UserAPI;
 import com.glowmart.shop_management.dto.UserDto;
+import com.glowmart.shop_management.exception.DuplicateException;
+import com.glowmart.shop_management.exception.NotFoundException;
+import com.glowmart.shop_management.exception.NotValidException;
 import com.glowmart.shop_management.security.AuthResponse;
 import com.glowmart.shop_management.security.CustomUserDetailsService;
 import com.glowmart.shop_management.security.JwtUtil;
@@ -12,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -177,6 +182,60 @@ public class UserController {
             @RequestParam(defaultValue = "100") int size
     ) {
         return userService.findUsersAfterId(lastId, size);
+    }
+
+    /**
+     * Updates the information of a user account identified by the given ID.
+     * <p>
+     * This endpoint allows an authenticated user to update their own account details, including email,
+     * name, and phone number. The operation is restricted to the account owner only—authorization is
+     * enforced by comparing the email in the JWT token with the email of the user retrieved from the database.
+     * </p>
+     *
+     * @param id    the unique identifier of the user to be updated (must match the authenticated user's ID)
+     * @param email the new email address to update
+     * @param name  the new name to update
+     * @param phone the new phone number to update
+     * @return a {@link ResponseEntity} indicating the result of the update operation:
+     *         <ul>
+     *             <li>{@code 200 OK} if the update is successful</li>
+     *             <li>{@code 403 FORBIDDEN} if the authenticated user is not the account owner</li>
+     *             <li>{@code 400 BAD REQUEST} if the input data is invalid</li>
+     *             <li>{@code 404 NOT FOUND} if the user does not exist</li>
+     *             <li>{@code 409 CONFLICT} if the update causes a duplicate conflict</li>
+     *             <li>{@code 500 INTERNAL SERVER ERROR} for unexpected errors</li>
+     *         </ul>
+     */
+    @PutMapping(UserAPI.USER_UPDATE)
+    public ResponseEntity<?> updateUserById(@PathVariable("id") String id,
+                                            @RequestParam String email,
+                                            @RequestParam String name,
+                                            @RequestParam String phone) {
+        try {
+            // Get current login email
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String authenticatedUserEmail = authentication.getName();
+
+            // Get user by id from DB to compare with login email
+            UserDto getUserById = userService.findUserById(id);
+
+            // Compare login email and retrieved email from DB
+            if (!authenticatedUserEmail.equals(getUserById.getUserEmail())) {
+                return new ResponseEntity<>("Unauthorized: You can only update your own account", HttpStatus.FORBIDDEN);
+            }
+
+            // Update user information
+            userService.updateUserById(id, email, name, phone);
+            return new ResponseEntity<>("User is successfully updated", HttpStatus.OK);
+        } catch (NotValidException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (DuplicateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
