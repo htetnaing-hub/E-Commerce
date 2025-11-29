@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: shop_management
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/shop_management}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:12121998hna}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+        ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create-drop}  # dev: create-drop, prod: validate/update
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # format_sql: true
+
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - file:uploads/
+
+server:
+  port: ${SERVER_PORT:8081}
+  error:
+    include-message: always
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
