@@ -13,15 +13,12 @@ spring:
 
   jpa:
     hibernate:
-<<<<<<< HEAD
-        ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}  # dev: create-drop, prod: validate/update
-    show-sql: ${SPRING_JPA_SHOW_SQL:false}
-=======
+        ## ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}  # dev: create-drop, prod: validate/update
+    ## show-sql: ${SPRING_JPA_SHOW_SQL:false}
         # ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create-drop}  # dev: create-drop, prod: validate/update
-        ddl-auto: update
+        ddl-auto: create-drop
     # show-sql: ${SPRING_JPA_SHOW_SQL:false}
     show-sql: true
->>>>>>> old-version
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
