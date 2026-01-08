@@ -6,20 +6,21 @@ services:
     container_name: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12121998hna
+      POSTGRES_DB: shop_management
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h 127.0.0.1"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shop_management -h 127.0.0.1"]
       interval: 5s
       timeout: 3s
       retries: 10
 
   myapp:
+    build: .
     image: myapp:latest          # or build: . if you need to build from Dockerfile
     container_name: myapp
     restart: unless-stopped
@@ -27,14 +28,15 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"    # ensure your app listens on 8081 inside the container
+      - "8081:8081"    # ensure your app listens on 8081 inside the container
     environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
-      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL}
-      SERVER_PORT: ${SERVER_PORT}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shop_management
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12121998hna
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      SPRING_JPA_SHOW_SQL: true
+      SERVER_PORT: 8081
+      SPRING_PROFILES_ACTIVE: docker
 
 volumes:
   pgdata:
