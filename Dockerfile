@@ -1,12 +1,23 @@
 # Stage 1: Build
-FROM eclipse-temurin:19-jdk AS build
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY . .
-RUN apt-get update && apt-get install -y maven
-RUN mvn package -DskipTests
+
+# Copy pom first (for caching)
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY src ./src
+
+# Build jar
+RUN mvn clean package -DskipTests
 
 # Stage 2: Run
-FROM eclipse-temurin:19-jdk
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /app/target/shop_management-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Copy jar file
+COPY --from=build /app/target/*.jar app.jar
+
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]

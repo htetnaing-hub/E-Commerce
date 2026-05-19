@@ -5,14 +5,13 @@ import com.glowmart.shop_management.converter.UserConverter;
 import com.glowmart.shop_management.dto.UserDto;
 import com.glowmart.shop_management.entity.Role;
 import com.glowmart.shop_management.entity.User;
+import com.glowmart.shop_management.exception.DuplicateEmailException;
 import com.glowmart.shop_management.exception.DuplicateException;
 import com.glowmart.shop_management.exception.NotFoundException;
 import com.glowmart.shop_management.exception.NotValidException;
-import com.glowmart.shop_management.service.UserService;
-import com.glowmart.shop_management.exception.DuplicateEmailException;
 import com.glowmart.shop_management.repository.RoleRepository;
 import com.glowmart.shop_management.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.glowmart.shop_management.service.UserService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,14 +37,15 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Creates a new user with the specified role.
@@ -100,9 +99,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDto findUserByEmail(String userEmail) {
-        User user = userRepository.findUserByEmail(userEmail);
-        UserDto userDto = UserConverter.convertToUserDto(user);
-        return userDto;
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " is not found!"));
+        return UserConverter.convertToUserDto(user);
     }
 
     /**
@@ -155,22 +154,24 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updateUserById(String id, String email, String name, String phone) {
-        if(CommonFunction.isValidId(id) == false){
+        if(!CommonFunction.isValidId(id)){
             throw new NotValidException("User id is not valid! Id must be only number, not null and greater than 0.");
         }
 
-        if (CommonFunction.isValidName(name) == false){
+        if (!CommonFunction.isValidName(name)){
             throw new NotValidException("User name is not valid! Please enter letters and spaces.");
         }
 
         Long userId = Long.parseLong(id);
-        Optional<User> userById = userRepository.findById(userId);
+        //Optional<User> userById = userRepository.findById(userId);
+        User userById = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + id + " is not found!"));
 
-        if (userById.isEmpty()) {
+        if (userById == null) {
             throw new NotFoundException("There is no user by id:" + id + "!");
         }
 
-        if (email.equalsIgnoreCase(userById.get().getUserEmail())) {
+        if (email.equalsIgnoreCase(userById.getUserEmail())) {
             throw new DuplicateException(email.toLowerCase() + " is same with old your email!");
         }
 
@@ -178,7 +179,7 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateException(email.toLowerCase() + " is already exists!");
         }
 
-        if (phone.equalsIgnoreCase(userById.get().getUserPhone())) {
+        if (phone.equalsIgnoreCase(userById.getUserPhone())) {
             throw new DuplicateException(phone.toLowerCase() + " is same with old your phone number!");
         }
 
@@ -186,13 +187,13 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateException(phone + " is already exists!");
         }
 
-        userById.get().setUserEmail(email);
-        userById.get().setUserName(name);
-        userById.get().setUserPhone(phone);
-        userById.get().setUpdatedAt(LocalDateTime.now());
+        userById.setUserEmail(email);
+        userById.setUserName(name);
+        userById.setUserPhone(phone);
+        userById.setUpdatedAt(LocalDateTime.now());
 
         try {
-            userRepository.save(userById.get());
+            userRepository.save(userById);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -207,8 +208,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findUserById(String id) {
         Long userId = Long.parseLong(id);
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + id + " is not found!"));
         return UserConverter.convertToUserDto(user);
     }
-
 }
