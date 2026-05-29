@@ -38,6 +38,13 @@ public class SecurityConfig {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
                         .requestMatchers(UserAPI.BASE_PATH + UserAPI.USER_SIGN_UP,
                                 UserAPI.BASE_PATH + UserAPI.USER_LOGIN,
                                 UserAPI.BASE_PATH + UserAPI.REFRESH_TOKEN,
@@ -47,13 +54,16 @@ public class SecurityConfig {
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_CREATE,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_UPDATE,
                                 ProductAPI.BASE_PATH + ProductAPI.PRODUCT_DELETE,
-                                ProductAPI.BASE_PATH + ProductAPI.PRODUCT_BY_ID).permitAll()
+                                ProductAPI.BASE_PATH + ProductAPI.PRODUCT_BY_ID
+                        ).permitAll()
+
                         .requestMatchers(UserAPI.BASE_PATH + UserAPI.USER_LIST,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_CREATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_UPDATE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_DELETE,
                                 CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_BY_ID,
-                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_BY_NAME).hasRole("ADMIN")
+                                CategoryAPI.BASE_PATH + CategoryAPI.CATEGORY_BY_NAME
+                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
