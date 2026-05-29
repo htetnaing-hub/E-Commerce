@@ -27,7 +27,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse res,
                                     FilterChain chain) throws ServletException, IOException {
 
-        /* 1. Grab the bearer token */
+
+        /*
+         * Allow Swagger-related endpoints to bypass authentication filter.
+         * These endpoints are used for API documentation (Swagger UI and OpenAPI JSON)
+         * and should remain publicly accessible.
+         */
+        String path = req.getRequestURI();
+        if (path.contains("/swagger-ui") || path.contains("/v3/api-docs")) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        /* Grab the bearer token */
         String authHdr = req.getHeader("Authorization");
         if (authHdr == null || !authHdr.startsWith("Bearer ")) {
             chain.doFilter(req, res);               // no header → next filter (might be public)
@@ -35,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String token = authHdr.substring(7);
 
-        /* 2. Validate signature + expiry */
+        /* Validate signature + expiry */
         String username;
         try {
             username = jwt.extractUsername(token);
@@ -48,12 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        /* 3. Convert roles to GrantedAuthority */
+        /* Convert roles to GrantedAuthority */
         List<GrantedAuthority> auths = jwt.extractRoles(token).stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        /* 4. Build Authentication & put in context */
+        /* Build Authentication & put in context */
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(username, null, auths);
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
@@ -61,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         org.springframework.security.core.context.SecurityContextHolder
                 .getContext().setAuthentication(authentication);
 
-        /* 5. Hand off to the next filter */
+        /* Hand off to the next filter */
         chain.doFilter(req, res);
     }
 }
